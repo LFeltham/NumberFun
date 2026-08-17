@@ -8,6 +8,8 @@ import androidx.compose.material3.Text
 import com.example.numberfun.ui.screens.QuizScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import com.example.numberfun.ui.screens.StatisticsScreen
+import com.example.numberfun.ui.screens.SettingsScreen
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -39,11 +41,13 @@ fun NumberFunNavigation() {
         }
 
         composable(Routes.STATISTICS) {
-            SimpleScreen("Statistics Screen")
+            StatisticsScreen()
+
         }
 
         composable(Routes.SETTINGS) {
-            SimpleScreen("Settings Screen")
+            SettingsScreen()
+
         }
     }
 }
