@@ -11,14 +11,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.collectAsState
-import com.example.numberfun.viewmodel.QuizViewModel
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlin.random.Random
+import com.example.numberfun.viewmodel.QuizViewModel
 
 data class MathsQuestion(
     val firstNumber: Int,
@@ -27,15 +26,31 @@ data class MathsQuestion(
     val answers: List<Int>
 )
 
-fun generateQuestion(): MathsQuestion {
-    val first = Random.nextInt(1, 11)
-    val second = Random.nextInt(1, 11)
+fun generateQuestion(
+    difficulty: String = "Easy"
+): MathsQuestion {
+
+    val range = when (difficulty) {
+        "Medium" -> 1..20
+        "Hard" -> 1..50
+        else -> 1..10
+    }
+
+    val first = range.random()
+    val second = range.random()
     val correct = first + second
 
     val wrongAnswers = mutableSetOf<Int>()
 
     while (wrongAnswers.size < 3) {
-        val wrong = correct + Random.nextInt(-5, 6)
+
+        val variation = when (difficulty) {
+            "Medium" -> (-10..10).random()
+            "Hard" -> (-20..20).random()
+            else -> (-5..5).random()
+        }
+
+        val wrong = correct + variation
 
         if (wrong >= 0 && wrong != correct) {
             wrongAnswers.add(wrong)
@@ -55,7 +70,6 @@ fun generateQuestion(): MathsQuestion {
 @Composable
 fun QuizScreen(
     viewModel: QuizViewModel
-
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -87,7 +101,8 @@ fun QuizScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "${uiState.question.firstNumber} + ${uiState.question.secondNumber} = ?",
+                    text = "${uiState.question.firstNumber} + " +
+                            "${uiState.question.secondNumber} = ?",
                     style = MaterialTheme.typography.headlineLarge
                 )
             }
@@ -96,6 +111,7 @@ fun QuizScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         uiState.question.answers.forEach { answer ->
+
             Button(
                 onClick = {
                     viewModel.submitAnswer(answer)
@@ -121,6 +137,7 @@ fun QuizScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         if (uiState.answerSelected && !uiState.quizComplete) {
+
             Button(
                 onClick = {
                     viewModel.nextQuestion()
@@ -137,8 +154,10 @@ fun QuizScreen(
         }
 
         if (uiState.quizComplete) {
+
             Text(
-                text = "Quiz complete! Final score: ${uiState.score} / 10",
+                text = "Quiz complete! Final score: " +
+                        "${uiState.score} / 10",
                 style = MaterialTheme.typography.headlineSmall
             )
 

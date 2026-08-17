@@ -60,7 +60,10 @@ fun NumberFunNavigation() {
             )
 
             val quizViewModel: QuizViewModel = viewModel(
-                factory = QuizViewModelFactory(repository)
+                factory = QuizViewModelFactory(
+                    repository = repository,
+                    difficulty = difficulty
+                )
             )
 
             QuizScreen(

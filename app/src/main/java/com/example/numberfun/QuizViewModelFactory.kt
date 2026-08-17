@@ -5,7 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.numberfun.data.QuizRepository
 
 class QuizViewModelFactory(
-    private val repository: QuizRepository
+    private val repository: QuizRepository,
+    private val difficulty: String
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(
@@ -13,7 +14,7 @@ class QuizViewModelFactory(
     ): T {
         if (modelClass.isAssignableFrom(QuizViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return QuizViewModel(repository) as T
+            return QuizViewModel(repository, difficulty) as T
         }
 
         throw IllegalArgumentException("Unknown ViewModel class")
