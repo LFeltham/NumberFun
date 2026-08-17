@@ -31,17 +31,31 @@ class HomeViewModel : ViewModel() {
             )
 
             try {
-                val response =
-                    RetrofitClient.wikipediaApi.getSummary("Mathematics")
+
+                val expressions = listOf(
+                    "12*12",
+                    "144/12",
+                    "25*4",
+                    "9*9",
+                    "15+27"
+                )
+
+                val expression = expressions.random()
+
+                val answer =
+                    RetrofitClient.wikipediaApi
+                        .calculate(expression)
 
                 _uiState.value = HomeUiState(
-                    mathsFact = response.extract
+                    mathsFact =
+                        "Can you solve $expression? The answer is $answer."
                 )
 
             } catch (e: Exception) {
 
                 _uiState.value = HomeUiState(
-                    errorMessage = "Unable to load maths fact."
+                    errorMessage =
+                        "Unable to load maths fact."
                 )
             }
         }

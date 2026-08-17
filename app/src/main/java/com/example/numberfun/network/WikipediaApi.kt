@@ -1,17 +1,12 @@
 package com.example.numberfun.network
 
 import retrofit2.http.GET
-import retrofit2.http.Path
-
-data class WikipediaSummary(
-    val title: String,
-    val extract: String
-)
+import retrofit2.http.Query
 
 interface WikipediaApi {
 
-    @GET("page/summary/{title}")
-    suspend fun getSummary(
-        @Path("title") title: String
-    ): WikipediaSummary
+    @GET("v4/")
+    suspend fun calculate(
+        @Query("expr") expression: String
+    ): String
 }
