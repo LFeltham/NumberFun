@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 data class StatisticsUiState(
     val quizzesCompleted: Int = 0,
@@ -22,7 +24,8 @@ data class StatisticsUiState(
         }
 }
 
-class StatisticsViewModel(
+@HiltViewModel
+class StatisticsViewModel @Inject constructor(
     repository: QuizRepository
 ) : ViewModel() {
 

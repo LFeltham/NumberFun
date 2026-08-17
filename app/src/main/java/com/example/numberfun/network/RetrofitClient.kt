@@ -2,17 +2,17 @@ package com.example.numberfun.network
 
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import retrofit2.create
 
 object RetrofitClient {
 
-    val wikipediaApi: WikipediaApi by lazy {
+    private val retrofit: Retrofit = Retrofit.Builder()
+        .baseUrl("https://api.mathjs.org/")
+        .addConverterFactory(
+            ScalarsConverterFactory.create()
+        )
+        .build()
 
-        Retrofit.Builder()
-            .baseUrl("https://api.mathjs.org/")
-            .addConverterFactory(
-                ScalarsConverterFactory.create()
-            )
-            .build()
-            .create(WikipediaApi::class.java)
-    }
+    val wikipediaApi: WikipediaApi =
+        retrofit.create<WikipediaApi>()
 }

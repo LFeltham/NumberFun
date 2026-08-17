@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 data class QuizUiState(
     val questionNumber: Int = 1,
@@ -20,10 +22,14 @@ data class QuizUiState(
     val resultSaved: Boolean = false
 )
 
-class QuizViewModel(
-    private val repository: QuizRepository,
-    private val difficulty: String
+@HiltViewModel
+class QuizViewModel @Inject constructor(
+    private val repository: QuizRepository
 ) : ViewModel() {
+    private var difficulty: String = "Easy"
+    fun setDifficulty(newDifficulty: String) {
+        difficulty = newDifficulty
+    }
 
     private fun createQuestion(): MathsQuestion {
         return generateQuestion(difficulty)

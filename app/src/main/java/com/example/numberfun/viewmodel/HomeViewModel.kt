@@ -17,13 +17,16 @@ data class HomeUiState(
 class HomeViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
-    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
+    val uiState: StateFlow<HomeUiState> =
+        _uiState.asStateFlow()
 
     init {
         loadMathsFact()
     }
 
     fun loadMathsFact() {
+
         viewModelScope.launch {
 
             _uiState.value = HomeUiState(
@@ -32,21 +35,23 @@ class HomeViewModel : ViewModel() {
 
             try {
 
-                val expressions = listOf(
-                    "12*12",
-                    "144/12",
-                    "25*4",
-                    "9*9",
-                    "15+27"
-                )
+                val choice =
+                    (System.currentTimeMillis() % 5).toInt()
 
-                val expression = expressions.random()
+                val expression = when (choice) {
+                    0 -> "12*12"
+                    1 -> "144/12"
+                    2 -> "25*4"
+                    3 -> "9*9"
+                    else -> "15+27"
+                }
 
                 val answer =
                     RetrofitClient.wikipediaApi
                         .calculate(expression)
 
                 _uiState.value = HomeUiState(
+                    isLoading = false,
                     mathsFact =
                         "Can you solve $expression? The answer is $answer."
                 )
@@ -54,6 +59,7 @@ class HomeViewModel : ViewModel() {
             } catch (e: Exception) {
 
                 _uiState.value = HomeUiState(
+                    isLoading = false,
                     errorMessage =
                         "Unable to load maths fact."
                 )

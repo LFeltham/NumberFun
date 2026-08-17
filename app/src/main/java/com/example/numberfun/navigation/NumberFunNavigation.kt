@@ -19,23 +19,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.numberfun.data.NumberFunDatabase
-import com.example.numberfun.data.QuizRepository
 import com.example.numberfun.ui.screens.QuizScreen
 import com.example.numberfun.ui.screens.SettingsScreen
 import com.example.numberfun.ui.screens.StatisticsScreen
 import com.example.numberfun.viewmodel.HomeViewModel
 import com.example.numberfun.viewmodel.QuizViewModel
-import com.example.numberfun.viewmodel.QuizViewModelFactory
 import com.example.numberfun.viewmodel.StatisticsViewModel
-import com.example.numberfun.viewmodel.StatisticsViewModelFactory
+import androidx.compose.ui.platform.LocalContext
+import com.example.numberfun.data.NumberFunDatabase
+import com.example.numberfun.data.QuizRepository
+import com.example.numberfun.viewmodel.QuizViewModelFactory
 
 object Routes {
     const val HOME = "home"
@@ -72,21 +71,19 @@ fun NumberFunNavigation() {
 
             val context = LocalContext.current
 
-            val database =
-                NumberFunDatabase.getDatabase(context)
+            val database = NumberFunDatabase.getDatabase(context)
 
-            val repository =
-                QuizRepository(
-                    database.quizResultDao()
-                )
+            val repository = QuizRepository(
+                database.quizResultDao()
+            )
 
-            val quizViewModel: QuizViewModel =
-                viewModel(
-                    factory = QuizViewModelFactory(
-                        repository = repository,
-                        difficulty = difficulty
-                    )
+            val quizViewModel: QuizViewModel = viewModel(
+                factory = QuizViewModelFactory(
+                    repository = repository
                 )
+            )
+
+            quizViewModel.setDifficulty(difficulty)
 
             QuizScreen(
                 viewModel = quizViewModel
@@ -95,23 +92,7 @@ fun NumberFunNavigation() {
 
         composable(Routes.STATISTICS) {
 
-            val context = LocalContext.current
-
-            val database =
-                NumberFunDatabase.getDatabase(context)
-
-            val repository =
-                QuizRepository(
-                    database.quizResultDao()
-                )
-
-            val statisticsViewModel: StatisticsViewModel =
-                viewModel(
-                    factory =
-                        StatisticsViewModelFactory(
-                            repository
-                        )
-                )
+            val statisticsViewModel: StatisticsViewModel = viewModel()
 
             StatisticsScreen(
                 viewModel = statisticsViewModel
@@ -201,7 +182,7 @@ fun HomeScreen(
                         )
                     }
 
-                    uiState.errorMessage.isNotEmpty() -> {
+                    uiState.errorMessage != "" -> {
 
                         Text(
                             uiState.errorMessage
@@ -222,7 +203,7 @@ fun HomeScreen(
                         }
                     }
 
-                    uiState.mathsFact.isNotEmpty() -> {
+                    uiState.mathsFact != "" -> {
 
                         Text(
                             text =
