@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.example.numberfun.data.NumberFunDatabase
 import com.example.numberfun.data.QuizRepository
 import com.example.numberfun.viewmodel.QuizViewModelFactory
+import com.example.numberfun.viewmodel.StatisticsViewModelFactory
 
 object Routes {
     const val HOME = "home"
@@ -92,11 +93,22 @@ fun NumberFunNavigation() {
 
         composable(Routes.STATISTICS) {
 
-            val statisticsViewModel: StatisticsViewModel = viewModel()
+            val context = LocalContext.current
+
+            val database = NumberFunDatabase.getDatabase(context)
+
+            val repository = QuizRepository(
+                database.quizResultDao()
+            )
+
+            val statisticsViewModel: StatisticsViewModel = viewModel(
+                factory = StatisticsViewModelFactory(repository)
+            )
 
             StatisticsScreen(
                 viewModel = statisticsViewModel
             )
+
         }
 
         composable(Routes.SETTINGS) {
