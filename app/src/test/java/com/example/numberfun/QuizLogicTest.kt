@@ -8,7 +8,7 @@ import org.junit.Test
 class QuizLogicTest {
 
     @Test
-    fun easyQuestion_numbersAreWithinExpectedRange() {
+    fun easyQuestion_numbersStayWithinEasyRange() {
         repeat(50) {
             val question = generateQuestion("Easy")
 
@@ -18,7 +18,7 @@ class QuizLogicTest {
     }
 
     @Test
-    fun mediumQuestion_numbersAreWithinExpectedRange() {
+    fun mediumQuestion_numbersStayWithinMediumRange() {
         repeat(50) {
             val question = generateQuestion("Medium")
 
@@ -28,7 +28,7 @@ class QuizLogicTest {
     }
 
     @Test
-    fun hardQuestion_numbersAreWithinExpectedRange() {
+    fun hardQuestion_numbersStayWithinHardRange() {
         repeat(50) {
             val question = generateQuestion("Hard")
 
@@ -38,7 +38,7 @@ class QuizLogicTest {
     }
 
     @Test
-    fun generatedQuestion_correctAnswerMatchesNumbers() {
+    fun correctAnswer_matchesQuestionNumbers() {
         repeat(50) {
             val question = generateQuestion("Easy")
 
@@ -50,7 +50,7 @@ class QuizLogicTest {
     }
 
     @Test
-    fun generatedQuestion_containsFourAnswersIncludingCorrectAnswer() {
+    fun question_hasFourAnswers_andIncludesCorrectAnswer() {
         repeat(50) {
             val question = generateQuestion("Easy")
 
