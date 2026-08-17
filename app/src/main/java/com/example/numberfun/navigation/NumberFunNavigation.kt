@@ -5,11 +5,21 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.unit.dp
 import com.example.numberfun.ui.screens.QuizScreen
 import com.example.numberfun.viewmodel.StatisticsViewModel
 import com.example.numberfun.viewmodel.StatisticsViewModelFactory
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.numberfun.viewmodel.HomeViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,8 +55,112 @@ fun NumberFunNavigation() {
         navController = navController,
         startDestination = Routes.HOME
     ) {
-        composable(Routes.HOME) {
-            HomeScreen(navController)
+        @Composable
+        fun HomeScreen(
+            navController: NavHostController,
+            homeViewModel: HomeViewModel = viewModel()
+        ) {
+            val uiState by homeViewModel.uiState.collectAsState()
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
+                Text(
+                    text = "NumberFun",
+                    style = MaterialTheme.typography.headlineLarge
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "Practise maths, track your progress and improve your skills.",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Card(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+
+                        Text(
+                            text = "Maths Fact",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        when {
+                            uiState.isLoading -> {
+                                Text("Loading maths fact...")
+                            }
+
+                            uiState.errorMessage.isNotEmpty() -> {
+                                Text(uiState.errorMessage)
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Button(
+                                    onClick = {
+                                        homeViewModel.loadMathsFact()
+                                    }
+                                ) {
+                                    Text("Try Again")
+                                }
+                            }
+
+                            uiState.mathsFact.isNotEmpty() -> {
+                                Text(
+                                    text = uiState.mathsFact,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = {
+                        navController.navigate(Routes.QUIZ)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Start Quiz")
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = {
+                        navController.navigate(Routes.STATISTICS)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Statistics")
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = {
+                        navController.navigate(Routes.SETTINGS)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Settings")
+                }
+            }
+
         }
 
         composable(Routes.QUIZ) {
