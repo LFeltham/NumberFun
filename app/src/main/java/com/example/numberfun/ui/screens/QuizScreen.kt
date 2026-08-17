@@ -11,12 +11,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.collectAsState
+import com.example.numberfun.viewmodel.QuizViewModel
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -55,13 +54,10 @@ fun generateQuestion(): MathsQuestion {
 }
 
 @Composable
-fun QuizScreen() {
-
-    var questionNumber by remember { mutableIntStateOf(1) }
-    var score by remember { mutableIntStateOf(0) }
-    var question by remember { mutableStateOf(generateQuestion()) }
-    var feedback by remember { mutableStateOf("") }
-    var answerSelected by remember { mutableStateOf(false) }
+fun QuizScreen(
+    viewModel: QuizViewModel = viewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -72,12 +68,12 @@ fun QuizScreen() {
     ) {
 
         Text(
-            text = "Question $questionNumber of 10",
+            text = "Question ${uiState.questionNumber} of 10",
             style = MaterialTheme.typography.titleMedium
         )
 
         Text(
-            text = "Score: $score",
+            text = "Score: ${uiState.score}",
             style = MaterialTheme.typography.bodyLarge
         )
 
@@ -91,7 +87,7 @@ fun QuizScreen() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "${question.firstNumber} + ${question.secondNumber} = ?",
+                    text = "${uiState.question.firstNumber} + ${uiState.question.secondNumber} = ?",
                     style = MaterialTheme.typography.headlineLarge
                 )
             }
@@ -99,22 +95,12 @@ fun QuizScreen() {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        question.answers.forEach { answer ->
-
+        uiState.question.answers.forEach { answer ->
             Button(
                 onClick = {
-                    if (!answerSelected) {
-                        answerSelected = true
-
-                        if (answer == question.correctAnswer) {
-                            score++
-                            feedback = "Correct!"
-                        } else {
-                            feedback =
-                                "Incorrect. The answer is ${question.correctAnswer}."
-                        }
-                    }
+                    viewModel.submitAnswer(answer)
                 },
+                enabled = !uiState.answerSelected,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp)
@@ -125,33 +111,46 @@ fun QuizScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (feedback.isNotEmpty()) {
+        if (uiState.feedback.isNotEmpty()) {
             Text(
-                text = feedback,
+                text = uiState.feedback,
                 style = MaterialTheme.typography.titleMedium
             )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (answerSelected && questionNumber < 10) {
+        if (uiState.answerSelected && !uiState.quizComplete) {
             Button(
                 onClick = {
-                    questionNumber++
-                    question = generateQuestion()
-                    feedback = ""
-                    answerSelected = false
+                    viewModel.nextQuestion()
                 }
             ) {
-                Text("Next Question")
+                Text(
+                    if (uiState.questionNumber == 10) {
+                        "Finish Quiz"
+                    } else {
+                        "Next Question"
+                    }
+                )
             }
         }
 
-        if (answerSelected && questionNumber == 10) {
+        if (uiState.quizComplete) {
             Text(
-                text = "Quiz complete! Final score: $score / 10",
+                text = "Quiz complete! Final score: ${uiState.score} / 10",
                 style = MaterialTheme.typography.headlineSmall
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    viewModel.restartQuiz()
+                }
+            ) {
+                Text("Play Again")
+            }
         }
     }
 }
