@@ -10,6 +10,10 @@ import com.example.numberfun.viewmodel.StatisticsViewModel
 import com.example.numberfun.viewmodel.StatisticsViewModelFactory
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.example.numberfun.ui.screens.StatisticsScreen
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -34,6 +38,8 @@ object Routes {
 @Composable
 fun NumberFunNavigation() {
     val navController = rememberNavController()
+    var difficulty by remember { mutableStateOf("Easy") }
+    var soundEnabled by remember { mutableStateOf(true) }
 
     NavHost(
         navController = navController,
@@ -86,11 +92,17 @@ fun NumberFunNavigation() {
         }
 
         composable(Routes.SETTINGS) {
-            SettingsScreen()
+            SettingsScreen(
+                difficulty = difficulty,
+                soundEnabled = soundEnabled,
+                onDifficultyChange = { difficulty = it },
+                onSoundChange = { soundEnabled = it }
+            )
+        }
 
         }
     }
-}
+
 
 @Composable
 fun HomeScreen(navController: NavHostController) {
