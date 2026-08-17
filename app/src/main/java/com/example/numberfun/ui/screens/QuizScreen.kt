@@ -11,7 +11,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.collectAsState
 import com.example.numberfun.viewmodel.QuizViewModel
 import androidx.compose.runtime.Composable
@@ -55,7 +54,8 @@ fun generateQuestion(): MathsQuestion {
 
 @Composable
 fun QuizScreen(
-    viewModel: QuizViewModel = viewModel()
+    viewModel: QuizViewModel
+
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

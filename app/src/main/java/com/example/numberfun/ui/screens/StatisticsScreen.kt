@@ -15,23 +15,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.example.numberfun.viewmodel.StatisticsViewModel
+
 
 @Composable
-fun StatisticsScreen() {
-
-    // Temporary values.
-    // These will later be loaded from the Room database.
-    val quizzesCompleted = 0
-    val questionsAnswered = 0
-    val correctAnswers = 0
-    val bestScore = 0
-
-    val accuracy =
-        if (questionsAnswered > 0) {
-            (correctAnswers * 100) / questionsAnswered
-        } else {
-            0
-        }
+fun StatisticsScreen(
+    viewModel: StatisticsViewModel
+) {
+    val uiState by viewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -57,27 +50,27 @@ fun StatisticsScreen() {
 
         StatisticCard(
             title = "Quizzes Completed",
-            value = quizzesCompleted.toString()
+            value = uiState.quizzesCompleted.toString()
         )
 
         StatisticCard(
             title = "Questions Answered",
-            value = questionsAnswered.toString()
+            value = uiState.questionsAnswered.toString()
         )
 
         StatisticCard(
             title = "Correct Answers",
-            value = correctAnswers.toString()
+            value = uiState.correctAnswers.toString()
         )
 
         StatisticCard(
             title = "Accuracy",
-            value = "$accuracy%"
+            value = "${uiState.accuracy}%"
         )
 
         StatisticCard(
             title = "Best Score",
-            value = "$bestScore / 10"
+            value = "${uiState.bestScore} / 10"
         )
     }
 }
